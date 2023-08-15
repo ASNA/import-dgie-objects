@@ -38,12 +38,11 @@ The Import DataGate Archive program, show below in Figure 1, has a single Window
 
 <small>Figure 1. The Import DataGate Archive UI/small>
 
-> This program will import objects archived from more than one libraries.
+> This program will not import objects archived from more than one library.
 
 Its inputs are: 
 
-* **A `.dgie` archive file.** This needs to be created manually with DataGate Studio. When you create an archive file for use with this import program, you _must_ remember the archive's source library. It is the next input and must be entered manually.
-* **The source library** from which the archive was created. This value must be entered by hand. If you don't know the library name, you'll need to open the `.dgie` file with DataGate Studio's Import/Export to what the library name is. 
+* **A `.dgie` archive file.** This needs to be created manually with DataGate Studio. When you create an archive file for use with this import program. As mentioned above this program will only restore DGIE file with objects from a single library.
 * **The target Database Name.** A list of available Database Names is provided.
 * **The target library name.** A list of available library names is provided--fetched from the database name selected.
 
