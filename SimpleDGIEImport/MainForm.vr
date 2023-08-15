@@ -1,0 +1,376 @@
+﻿Using System
+Using System.Collections
+Using System.Collections.Generic
+Using System.ComponentModel
+Using System.Data
+Using System.Diagnostics
+Using System.Drawing
+Using System.Text.RegularExpressions
+Using System.IO
+Using System.Text
+Using System.Windows.Forms
+Using ASNA.DataGate.Client
+Using ASNA.DataGate.Client.Impex
+Using ASNA.DataGate.Providers
+
+BegClass Form1 Extends(System.Windows.Forms.Form) Access(*Public) Partial(*Yes)
+
+    DclFld logFile Type(System.IO.TextWriter)
+
+    BegConstructor Access(*Public)
+        //
+        // Required for Windows Form Designer support
+        //
+        InitializeComponent()
+
+        //
+        // TODO: Add any constructor code after InitializeComponent call
+        //
+        
+    EndConstructor
+
+    BegSr Form1_Load Access(*Private) Event(*this.Load)
+        DclSrParm sender *Object
+        DclSrParm e System.EventArgs
+
+         openfiledialogArchiveFile.InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString()
+         openfiledialogArchiveFile.Filter = "DG archive (*.DGIE)|*.dgie" 
+
+        DclArray DBNames Type(*String) Rank(1) 
+
+        DBNames = DGOperations.GetDBNames()
+        ForEach DBName Type(*String) Collection(DBNames) 
+            comboboxDBNames.Items.Add(DBName) 
+        EndFor 
+
+        comboboxDBNames.SelectedIndex = -1
+        comboboxLibraryNames.SelectedIndex = -1 
+
+        // The listbox height wouldn't stick! A little duct tape here. 
+        listboxLogFile.Height = 300
+    EndSr
+
+    BegSr Form1_FormClosing Access(*Private) Event(*this.FormClosing)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.Windows.Forms.FormClosingEventArgs)
+        
+        // Occurs when form is closing.    
+        // Put form "housecleaning" code here (ie close files).
+    EndSr
+
+    BegSr ShowRestoreEntries
+        // A future version may have the ability to show or filter archive entries. 
+        DclSrParm toc Type(TocEntryCollection)
+        DclSrParm restoreEntries type(List(*of RestoreEntry))
+        
+        DclFld ao Type(ArchivedObject) 
+
+        ForEach re toc Type(ITocEntry)
+            ao = *New ArchivedObject()
+            ao.Path = re.Properties['path']
+            ao.Type = re.AdgType.ToString()
+            ao.Subtype = re.Properties['subtype']
+        EndFor         
+    EndSr
+
+    BegSr GetRestoreEntries Access(*private)
+        DclSrParm toc Type(TocEntryCollection)
+        DclSrParm restoreEntries type(List(*of RestoreEntry))
+        DclSrParm parent type(*string)
+        DclSrParm FromLibraryNameStr Type(*String) 
+        DclSrParm TargetLibraryStr Type(*String) 
+
+        DclFld subEntries type(TocEntryCollection)
+        dclFld restoreEntry Type(RestoreEntry)
+        dclfld parentSubpath type(*string)
+        dclfld entryParent type(*string)
+
+        if (parent = *NOTHING *or parent.Length = 0)
+            parentSubPath = ""
+        else
+            parentSubPath = parent + "/"
+        endif
+
+        foreach re toc Type(ITocEntry)
+            entryParent = re.Properties['path']
+            entryParent = parentSubPath + re.Name
+            restoreEntry = *new RestoreEntry( +
+                        "/" + FromLibraryNameStr + "/" + entryParent, +
+                        TargetLibraryStr + "/" + entryParent, +
+                        re.AdgType )
+            restoreEntries.Add( restoreEntry )
+            if (re.SubEntries <> *NOTHING)
+                subEntries = *new TocEntryCollection(re.SubEntries)
+                GetRestoreEntries(subEntries, restoreEntries, entryParent, FromLibraryNameStr, TargetLibraryStr)
+            endif
+        endfor
+    EndSr
+
+    BegFunc GetSourceLibraries Type(*String) Rank(1) 
+        DclSrParm Entries Type(IEnumerable) 
+
+        DclFld UniqueLibraryNames Type(List(*Of *String)) New()
+        DclFld re Type(*String) 
+  
+        // Entries is a IEnumerable list of strings.
+        // It contains three entries for each archived object:
+        //   1 = /library 
+        //   2 = /library/file
+        //   3 = /library/file/member
+
+        // RegEx to match a string that starts with a "/" character and contains no other "/" characters.
+        re = "^[/][^/]*$"
+
+        // Loop over Entries to fetch only the unique library name entries. 
+        ForEach entry Type(*String) Collection(Entries) 
+            If Regex.IsMatch(entry, re) AND NOT UniqueLibraryNames.Contains(entry) 
+                UniqueLibraryNames.Add(entry)             
+            EndIf 
+        EndFor 
+
+        LeaveSr UniqueLibraryNames.ToArray()
+    EndFunc 
+
+    BegSr button1_Click Access(*Private) Event(*this.buttonImport.Click)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        DclFld cn Type(AdgConnection)
+        DclFld r Type(Restorer)
+        dclFld loader Type(Loader)
+        dclFld toc Type(TocEntryCollection)
+        dclFld restoreEntries Type(List(*of RestoreEntry))
+        dclFld restoreItem Type(RestoreLib)
+        DclFld importLogPath Type(*string)
+        DclFld cursor Type(Cursor)
+        DclFld ArchiveFileFullName Type(*String) 
+        DclFld DatabaseNameStr Type(*String) 
+        DclFld FromLibraryNameStr Type(*String) 
+        DclFld TargetLibraryStr Type(*String) 
+        DclFld ImportFilePathStr Type(*String) 
+                
+        DclArray LogFileContents Type(*String) Rank(1)         
+
+        DatabaseNameStr = comboboxDBNames.Text
+                        
+        TargetLibraryStr = comboboxLibraryNames.Text 
+        ArchiveFileFullName = textboxArchiveFile.Text 
+
+        Try
+            // Set the wait cursor to tell the user we are busy.
+            cursor = Cursor.Current
+            Cursor.Current = Cursors.WaitCursor
+
+            // Open a temporary file, used for the import log.
+            importLogPath = Path.GetTempFileName()
+            logFile = *new StreamWriter( importLogPath, *false, System.Text.Encoding.UTF8 )
+
+            // Ensure file exists
+            if (*False = System.IO.File.Exists(ArchiveFileFullName))
+                MessageBox.Show( "Import file '" + ImportFilePathStr + Writer.Extension + "' not found.")
+                Leavesr
+            endif
+
+            // Create a loader object.  This is used to verify the format
+            // and catalog of the input file prior to the import operation.
+            // The loader can be used in advanced UI scenarios, to help
+            // a user process only certain parts of the import file.
+            loader = *new Loader()
+
+            // Attach an event handler, so that we can receive
+            // feedback events during the load through our
+            // r_Notify method.
+            AddHandler SourceObject(loader) SourceEvent(Notify) HandlerSr(r_Notify)
+
+            // Load the import file.  The flags passed in the constructor
+            // specify the amount of feedback generated during import.
+            loader.Load(ArchiveFileFullName, +
+                        XmlInfoEventType.ErrorsAndWarnings *bitor +
+                        XmlInfoEventType.InfoAll *as XmlInfoEventType )
+
+            DclArray SourceLibraries Type(*String) Rank(1)
+
+            /*
+
+            Hack alert! 
+
+            This code should support import from archives with objects from more than one library--but it does not. 
+            
+            This code was derived from an old Tim Jannsen project that was written all as a single routine. 
+            With a little time, this code could be refactored to support restoring objects archived from multiple
+            libraries. Sigh. With a little more time. 
+
+             */
+
+            SourceLibraries = GetSourceLibraries(loader.Entries) 
+            If SourceLibraries.Length > 1 
+                MsgBox "The archive cannot contain objects from more than one library."
+                LeaveSr 
+            EndIf
+
+            FromLibraryNameStr = SourceLibraries[0]
+
+            toc = loader.GetChildrenPaths(FromLibraryNameStr)
+            
+            // Make sure we found entries.
+            if ( toc.Count < 1 )
+                ShowMessage(String.Format("There are no archive entries for the {0} library.", FromLibraryNameStr), *True) 
+                //textboxSourceLibrary.Focus()
+                Leavesr
+            endif 
+
+            // Convert the entries into a RestoreEntry list.  A smarter
+            // program might want to scan the entries and determine 
+            // which should be restored.  We will just take them all.
+
+            restoreEntries = *new List(*of RestoreEntry)()
+            GetRestoreEntries(toc, restoreEntries, *NOTHING, FromLibraryNameStr, TargetLibraryStr)
+
+            ShowRestoreEntries(toc, restoreEntries) 
+
+            // Create a RestoreLib object that we can use with the
+            // restorer.  This object names the root entry of the 
+            // import file, what it should be named when restored,
+            // and the list of items in that libary to restore.
+            restoreItem = *new RestoreLib(FromLibraryNameStr, +
+                                  TargetLibraryStr, *true, restoreEntries )
+
+            // Create a Restorer object, used to manage the import 
+            // process.  The flags passed in the constructor
+            // specify the amount of feedback generated during
+            // import.
+            r = *new Restorer( loader, +
+                        XmlInfoEventType.ErrorsAndWarnings *bitor +
+                        XmlInfoEventType.InfoAll *as XmlInfoEventType )
+
+            // Attach an event handler, so that we can receive
+            // feedback events during the import through our
+            // r_Notify method.
+            AddHandler SourceObject(r) SourceEvent(Notify) HandlerSr(r_Notify)
+
+            // Open a database connection, specifying a database name
+            cn = *new AdgConnection( DatabaseNameStr )
+            cn.Open()
+
+            // Do the restore to the target database.
+            r.Restore( cn, restoreItem )
+            ShowMessage("Import complete. See detail below", *False)
+
+        Catch exc Type(System.Exception)
+            if ( logFile <> *nothing )
+                logFile.WriteLine( exc )
+            endif
+            //MessageBox.Show( "An exception occurred and was logged.", "Exception!" )
+            ShowMessage("An error occurred. See detail below", *True)
+        Finally
+            // Reset the cursor.
+            Cursor.Current = cursor
+
+            // Close the loader.  Detaching the handler allows it to be garbage collected.
+            if ( loader <> *nothing )
+                RemoveHandler SourceObject(loader) SourceEvent(Notify) HandlerSr(r_Notify)
+                loader.Dispose()
+            endif
+
+            // Detach our handler from the restorer.
+            if ( r <> *nothing )
+                RemoveHandler SourceObject(r) SourceEvent(Notify) HandlerSr(r_Notify)
+            endif
+
+            // Close the log file.
+            if ( logFile <> *nothing )
+                logFile.Close()
+            endif
+
+            // Always close DataGate connections when you are finished using them.
+            if ( cn <> *nothing )
+                cn.Dispose()
+            endif
+
+        EndTry
+
+        LogFileContents = File.ReadAllLines(importLogPath) 
+        listboxLogFile.DataSource = LogFileContents
+        listboxLogFile.SelectedIndex = listboxLogFile.Items.Count - 1
+    EndSr
+
+    BegSr ShowMessage
+        DclSrParm ErrorMessage Type(*String) 
+        DclSrParm Error Type(*Boolean) 
+
+        labelError.Text = ErrorMessage 
+
+        If Error 
+            labelError.BackColor = Color.Red
+            labelError.ForeColor = Color.White
+        Else 
+            labelError.BackColor = Color.Green
+            labelError.ForeColor = Color.White
+        EndIf 
+
+        labelError.Visible = *True 
+    EndSr 
+    
+    // Import progress feedback event handler.
+    BegSr r_Notify access(*private) 
+        DclSrParm sender type(*object)
+        DclSrParm args type(ImpexTypedArgs(*of *string))
+
+        // This example runs in the UI thread, so displaying progress
+        // in a form is not possible (see the AsynchronousImport
+        // example for a solution to this problem).  So, we will 
+        // simply save all the import feedback in a log file that we
+        // display when the import is complete.
+        logFile.WriteLine( args.Data )
+    EndSr
+    
+    BegSr comboboxDBNames_SelectedIndexChanged Access(*Private) Event(*this.comboboxDBNames.SelectedIndexChanged)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        If NOT String.IsNullOrEmpty(comboboxDBNames.Text) 
+            comboboxLibraryNames.DataSource = DGOperations.GetLibraries(comboboxDBNames.Text) 
+        EndIF 
+        comboboxLibraryNames.SelectedIndex = -1
+        EnableImportButton()
+    EndSr
+    
+    BegSr buttonSelectArchiveFile_Click Access(*Private) Event(*this.buttonSelectArchiveFile.Click)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+        
+        If  ( openfiledialogArchiveFile.ShowDialog() = DialogResult.OK )   
+            textboxArchiveFile.Text = openfiledialogArchiveFile.FileName     
+        EndIf 
+    EndSr   
+    
+    BegSr comboboxLibraryNames_SelectedIndexChanged Access(*Private) Event(*this.comboboxLibraryNames.SelectedIndexChanged)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        EnableImportButton()
+    EndSr 
+
+    BegSr EnableImportButton
+        buttonImport.Enabled = NOT String.IsNullOrEmpty(textboxArchiveFile.Text) AND + 
+                               NOT String.IsNullOrEmpty(comboboxDBNames.Text) AND + 
+                               NOT String.IsNullOrEmpty(comboboxLibraryNames.Text) 
+
+        listboxLogFile.DataSource = *Nothing 
+        labelError.Visible = *False
+    EndSr
+    
+    BegSr textboxArchiveFile_TextChanged Access(*Private) Event(*this.textboxArchiveFile.TextChanged)
+        DclSrParm sender Type(*Object)
+        DclSrParm e Type(System.EventArgs)
+
+        EnableImportButton()
+    EndSr
+    
+EndClass
+
+BegClass ArchivedObject
+    DclProp Path Type(*String) Access(*Public) 
+    DclProp Type Type(*String) Access(*Public) 
+    DclProp Subtype Type(*String) Access(*Public) 
+EndClass

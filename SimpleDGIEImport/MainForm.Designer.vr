@@ -1,0 +1,194 @@
+﻿BegClass Form1 Partial(*Yes)
+	DclFld listboxLogFile Type(System.Windows.Forms.ListBox) Access(*Private) WithEvents(*Yes)
+	DclFld labelError Type(System.Windows.Forms.Label) Access(*Private) WithEvents(*Yes)
+	DclFld label3 Type(System.Windows.Forms.Label) Access(*Private) WithEvents(*Yes)
+	DclFld label5 Type(System.Windows.Forms.Label) Access(*Private) WithEvents(*Yes)
+	DclFld buttonImport Type(System.Windows.Forms.Button) Access(*Private) WithEvents(*Yes)
+	DclFld textboxArchiveFile Type(System.Windows.Forms.TextBox) Access(*Private) WithEvents(*Yes)
+	DclFld openfiledialogArchiveFile Type(System.Windows.Forms.OpenFileDialog) Access(*Private) WithEvents(*Yes)
+	DclFld buttonSelectArchiveFile Type(System.Windows.Forms.Button) Access(*Private) WithEvents(*Yes)
+	DclFld comboboxLibraryNames Type(System.Windows.Forms.ComboBox) Access(*Private) WithEvents(*Yes)
+	DclFld comboboxDBNames Type(System.Windows.Forms.ComboBox) Access(*Private) WithEvents(*Yes)
+	DclFld label4 Type(System.Windows.Forms.Label) Access(*Private) WithEvents(*Yes)
+
+	// Required method for Designer support - do not modify
+	// the contents of this method with the code editor.
+	BegSr InitializeComponent
+		*this.buttonImport = *new System.Windows.Forms.Button()
+		*this.label1 = *new System.Windows.Forms.Label()
+		*this.label4 = *new System.Windows.Forms.Label()
+		*this.comboboxDBNames = *new System.Windows.Forms.ComboBox()
+		*this.comboboxLibraryNames = *new System.Windows.Forms.ComboBox()
+		*this.openfiledialogArchiveFile = *new System.Windows.Forms.OpenFileDialog()
+		*this.buttonSelectArchiveFile = *new System.Windows.Forms.Button()
+		*this.textboxArchiveFile = *new System.Windows.Forms.TextBox()
+		*this.label3 = *new System.Windows.Forms.Label()
+		*this.label5 = *new System.Windows.Forms.Label()
+		*this.labelError = *new System.Windows.Forms.Label()
+		*this.listboxLogFile = *new System.Windows.Forms.ListBox()
+		*this.SuspendLayout()
+		//
+		//buttonImport
+		//
+		*this.buttonImport.Enabled = *False
+		*this.buttonImport.Location = *new System.Drawing.Point(877I, 207I)
+		*this.buttonImport.Margin = *new System.Windows.Forms.Padding(4I)
+		*this.buttonImport.Name = "buttonImport"
+		*this.buttonImport.Size = *new System.Drawing.Size(146I, 53I)
+		*this.buttonImport.TabIndex = 0I
+		*this.buttonImport.Text = "Import"
+		*this.buttonImport.UseVisualStyleBackColor = *True
+		//
+		//label1
+		//
+		*this.label1.AutoSize = *True
+		*this.label1.Font = *new System.Drawing.Font("Microsoft Sans Serif", 11, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.label1.Location = *new System.Drawing.Point(22I, 154I)
+		*this.label1.Margin = *new System.Windows.Forms.Padding(4I, 0I, 4I, 0I)
+		*this.label1.Name = "label1"
+		*this.label1.Size = *new System.Drawing.Size(243I, 26I)
+		*this.label1.TabIndex = 1I
+		*this.label1.Text = "Target Database Name:"
+		//
+		//label4
+		//
+		*this.label4.AutoSize = *True
+		*this.label4.Font = *new System.Drawing.Font("Microsoft Sans Serif", 11, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.label4.Location = *new System.Drawing.Point(22I, 213I)
+		*this.label4.Margin = *new System.Windows.Forms.Padding(4I, 0I, 4I, 0I)
+		*this.label4.Name = "label4"
+		*this.label4.Size = *new System.Drawing.Size(216I, 26I)
+		*this.label4.TabIndex = 7I
+		*this.label4.Text = "Target Library Name:"
+		//
+		//comboboxDBNames
+		//
+		*this.comboboxDBNames.Font = *new System.Drawing.Font("Microsoft Sans Serif", 11, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.comboboxDBNames.FormattingEnabled = *True
+		*this.comboboxDBNames.Location = *new System.Drawing.Point(300I, 148I)
+		*this.comboboxDBNames.Margin = *new System.Windows.Forms.Padding(4I)
+		*this.comboboxDBNames.Name = "comboboxDBNames"
+		*this.comboboxDBNames.Size = *new System.Drawing.Size(394I, 34I)
+		*this.comboboxDBNames.TabIndex = 9I
+		//
+		//comboboxLibraryNames
+		//
+		*this.comboboxLibraryNames.Font = *new System.Drawing.Font("Microsoft Sans Serif", 11, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.comboboxLibraryNames.FormattingEnabled = *True
+		*this.comboboxLibraryNames.Location = *new System.Drawing.Point(300I, 207I)
+		*this.comboboxLibraryNames.Margin = *new System.Windows.Forms.Padding(4I)
+		*this.comboboxLibraryNames.Name = "comboboxLibraryNames"
+		*this.comboboxLibraryNames.Size = *new System.Drawing.Size(394I, 34I)
+		*this.comboboxLibraryNames.TabIndex = 10I
+		//
+		//openfiledialogArchiveFile
+		//
+		*this.openfiledialogArchiveFile.AddExtension = *False
+		*this.openfiledialogArchiveFile.DefaultExt = "dgie"
+		*this.openfiledialogArchiveFile.FileName = "openFileDialog1"
+		//
+		//buttonSelectArchiveFile
+		//
+		*this.buttonSelectArchiveFile.Location = *new System.Drawing.Point(25I, 85I)
+		*this.buttonSelectArchiveFile.Name = "buttonSelectArchiveFile"
+		*this.buttonSelectArchiveFile.Size = *new System.Drawing.Size(191I, 39I)
+		*this.buttonSelectArchiveFile.TabIndex = 11I
+		*this.buttonSelectArchiveFile.Text = "Select archive (DGIE) file"
+		*this.buttonSelectArchiveFile.UseVisualStyleBackColor = *True
+		//
+		//textboxArchiveFile
+		//
+		*this.textboxArchiveFile.Location = *new System.Drawing.Point(300I, 90I)
+		*this.textboxArchiveFile.Margin = *new System.Windows.Forms.Padding(4I)
+		*this.textboxArchiveFile.Name = "textboxArchiveFile"
+		*this.textboxArchiveFile.ReadOnly = *True
+		*this.textboxArchiveFile.Size = *new System.Drawing.Size(723I, 32I)
+		*this.textboxArchiveFile.TabIndex = 12I
+		//
+		//label3
+		//
+		*this.label3.AutoSize = *True
+		*this.label3.Font = *new System.Drawing.Font("Microsoft Sans Serif", 14, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.label3.Location = *new System.Drawing.Point(22I, 24I)
+		*this.label3.Name = "label3"
+		*this.label3.Size = *new System.Drawing.Size(564I, 32I)
+		*this.label3.TabIndex = 14I
+		*this.label3.Text = "Import a DataGate Archive File into a library"
+		//
+		//label5
+		//
+		*this.label5.AutoSize = *True
+		*this.label5.Font = *new System.Drawing.Font("Microsoft Sans Serif", 11, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.label5.Location = *new System.Drawing.Point(23I, 315I)
+		*this.label5.Margin = *new System.Windows.Forms.Padding(4I, 0I, 4I, 0I)
+		*this.label5.Name = "label5"
+		*this.label5.Size = *new System.Drawing.Size(140I, 26I)
+		*this.label5.TabIndex = 15I
+		*this.label5.Text = "Logfile detail:"
+		//
+		//labelError
+		//
+		*this.labelError.AutoSize = *True
+		*this.labelError.BackColor = System.Drawing.Color.Red
+		*this.labelError.ForeColor = System.Drawing.Color.Snow
+		*this.labelError.Location = *new System.Drawing.Point(23I, 271I)
+		*this.labelError.Name = "labelError"
+		*this.labelError.Padding = *new System.Windows.Forms.Padding(4I)
+		*this.labelError.Size = *new System.Drawing.Size(641I, 34I)
+		*this.labelError.TabIndex = 16I
+		*this.labelError.Text = "An exception occurred during import. See the log file info below. "
+		*this.labelError.Visible = *False
+		//
+		//listboxLogFile
+		//
+		*this.listboxLogFile.Anchor = ((((System.Windows.Forms.AnchorStyles.Top *BitOr System.Windows.Forms.AnchorStyles.Bottom) *BitOr System.Windows.Forms.AnchorStyles.Left) *BitOr System.Windows.Forms.AnchorStyles.Right) *As System.Windows.Forms.AnchorStyles)
+		*this.listboxLogFile.FormattingEnabled = *True
+		*this.listboxLogFile.ItemHeight = 26I
+		*this.listboxLogFile.Location = *new System.Drawing.Point(27I, 353I)
+		*this.listboxLogFile.Name = "listboxLogFile"
+		*this.listboxLogFile.Size = *new System.Drawing.Size(1244I, 420I)
+		*this.listboxLogFile.TabIndex = 17I
+		//
+		//Form1
+		//
+		*this.AutoScaleDimensions = *new System.Drawing.SizeF(144, 144)
+		*this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi
+		*this.ClientSize = *new System.Drawing.Size(1304I, 818I)
+		*this.Controls.Add(*this.listboxLogFile)
+		*this.Controls.Add(*this.labelError)
+		*this.Controls.Add(*this.label5)
+		*this.Controls.Add(*this.label3)
+		*this.Controls.Add(*this.textboxArchiveFile)
+		*this.Controls.Add(*this.buttonSelectArchiveFile)
+		*this.Controls.Add(*this.comboboxLibraryNames)
+		*this.Controls.Add(*this.comboboxDBNames)
+		*this.Controls.Add(*this.label4)
+		*this.Controls.Add(*this.label1)
+		*this.Controls.Add(*this.buttonImport)
+		*this.Font = *new System.Drawing.Font("Microsoft Sans Serif", 11, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (0 *As System.Byte))
+		*this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow
+		*this.Margin = *new System.Windows.Forms.Padding(4I)
+		*this.MaximizeBox = *False
+		*this.Name = "Form1"
+		*this.Text = "Import DataGate Archive"
+		*this.ResumeLayout(*False)
+		*this.PerformLayout()
+	EndSr
+	
+	DclFld label1 Type(System.Windows.Forms.Label) Access(*Private) WithEvents(*Yes)
+	//Required by the Windows Form Designer
+	DclFld components Type(System.ComponentModel.IContainer) Inz(*Nothing)
+	
+	// Clean up any resources being used.
+	// "disposing" is true if managed resources should be disposed; otherwise, false.
+	BegSr Dispose Access(*Protected) Modifier(*Overrides)
+		DclSrParm disposing Type(*Boolean)
+
+		If (disposing *And (components *NE *Nothing))
+			components.Dispose()
+		EndIf
+			
+		*Base.Dispose(disposing)
+	EndSr
+	
+EndClass

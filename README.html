@@ -1,0 +1,24 @@
+﻿<h2 id="this">this</h2>
+<h2 id="importing-datagate-archive-files-into-a-datagate-database">Importing DataGate Archive Files into a DataGate database</h2>
+<p>DataGate Studio (DGS) provides database management utilities for DataGate databases. It snaps inside Visual Studio and its features include:</p>
+<ul>
+<li>Create database names</li>
+<li>Create local DG databases</li>
+<li>Create and change physical, logical, and print files</li>
+<li>Perform simple database queries</li>
+<li>Make minor changes to database data</li>
+</ul>
+<p>DGS installs by default with ASNA Visual RPG for .NET and it is available as a stand-alone install (generally intended for server installations). DGS is intended to be a developer feature and is not intended for end-users. It would be very easy for an end-user to use DGS to do potentially damaging things to a database. This is especially true for local DG Windows-hosted databases which have very limited security.</p>
+<h3 id="database-archives">Database archives</h3>
+<p>DGS also includes a database archive feature. Database archives provide a way to distribute copies of databases (or parts of a database) to other developers. This feature is intended almost exclusively for Windows-hosted (server or desktop) DataGate databases (sometimes called a &quot;local&quot; DG database). While DGS would theoretically work with IBM i and SQL Server databases, using DGS with these databases is discouraged.</p>
+<blockquote>
+<p>Please note that DG database archives are not intended, and should <em>not be used</em>, as an alternative to database backup. For local DG databases we recommend using a high-quality Windows backup like Acronis, Genie, NovaBackup, Paragon, or other that you deem worthy. For IBM i and SQL Server databases we recommend platform-specific backup best practices.</p>
+</blockquote>
+<p>This video shows how to use DataGate Studio's Import/Export facility:</p>
+<div class="p-2 inline-block bg-gray-500">
+    <video class="max-w-sm" src="https://asna.com/filebin/marketing/video/DataGateStudioImportExport.mp4" type="video/mp4" controls></video>    
+</div> 
+<h3 id="batch-import">Batch import</h3>
+<p>DGS archive creation is not intended to be a batch-driven process. Exporting and important database archives is a point-and-click process and assumes DataGate Studio is available to do so.</p>
+<p>That said, we have had a few customers using local DG databases ask for a way to import DGS archives from outside Visual Studio.</p>
+<p><img src="https://asna.com/filebin/marketing/article-figures/import-dgie-custom.png" alt="" /></p>

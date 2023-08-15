@@ -1,0 +1,68 @@
+﻿Using System
+Using System.Text
+Using System.Collections.Specialized
+Using System.Collections.Generic
+Using ASNA.DataGate.Client
+Using ASNA.DataGate.Common 
+Using ASNA.DataGate.Providers
+
+DclNamespace SimpleDGIEImport
+
+BegClass DGOperations Access(*Public)
+
+    BegFunc GetDBNames Type(String) Rank(1) Shared(*Yes) Access( *Public ) 
+        //
+        // Get all DB names.
+        //
+        DclFld DBNames Type(List(*Of String)) New()
+
+        ForEach DBName Type( *String ) Collection( DatabaseName.GetNames( *True ) )
+            DBNames.Add( "*PUBLIC/" + DBName )
+        EndFor
+        
+        ForEach DBName Type( *String ) Collection( DatabaseName.GetNames( *False ) )
+            DBNames.Add( DBName )
+        EndFor
+        
+        LeaveSr DBNames.ToArray() 
+    EndFunc 
+
+    BegFunc GetLibraries Type( StringCollection ) Shared(*Yes) Access( *Public ) 
+        //
+        // Get all libraries in a database name.
+        //
+        DclSrParm DBName Type( *String ) 
+    
+        DclFld LibraryNames Type( StringCollection ) New()
+        DclFld DB    Type( AdgConnection )
+        DclFld Dir   Type( IDirectory )		
+
+        DB = *New AdgConnection( DBName ) 
+        Try 
+            DB.Open()            
+        Catch Error Type( System.Exception ) 
+            Throw *New System.OperationCanceledException( "Failed to connect to DB: " + DBName )
+        EndTry             
+        
+        Try
+            Dir = AdgFactory.NewDirectory( DB, "/" )
+        Catch Type(dgException)
+            Throw *New System.OperationCanceledException( "Failed to find root in DB: " + DBName )
+        EndTry
+
+//        // If there are files in the root, add a root name to the list.
+//        If ( GetFiles( DBName, "/" ).Count > 0 ) 
+//            LibraryNames.Add( "/" )
+//        EndIf            
+        
+        // Add the other libraries.
+        ForEach Library Type( IAdgObject ) Collection( Dir.ItemList )         
+            LibraryNames.Add( Library.ToString().Remove( 0, 1 ) )       
+        EndFor 
+        
+        DB.Close()
+        
+        LeaveSr LibraryNames
+    EndFunc 
+
+EndClass
