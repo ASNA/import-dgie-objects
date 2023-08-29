@@ -11,7 +11,7 @@
     <RootNamespace>SimpleDGIEImport</RootNamespace>
     <AssemblyName>SimpleDGIEImport</AssemblyName>
     <StartupObject>SimpleDGIEImport.Form1</StartupObject>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <Name>SimpleDGIEImport</Name>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -31,14 +31,14 @@
     <NoWarn>5002,5003</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ASNA.DataGate.Client, Version=15.0.44.0, Culture=neutral, PublicKeyToken=78aac8f1f3f86b73">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    <Reference Include="ASNA.DataGate.Client">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Common Files\ASNA Shared\Client\17.0\ASNA.DataGate.Client.dll</HintPath>
     </Reference>
     <Reference Include="ASNA.DataGate.Client.Impex">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\Extensions\ASNA\Client Core Assemblies\15.0\ASNA.DataGate.Client.Impex.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\Extensions\ASNA\Client Core Assemblies\17.0\ASNA.DataGate.Client.Impex.dll</HintPath>
     </Reference>
-    <Reference Include="ASNA.Runtime, Version=15.0.47.0, Culture=neutral, PublicKeyToken=d7106be54d30c861">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    <Reference Include="ASNA.Runtime">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Common Files\ASNA Shared\Client\17.0\ASNA.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

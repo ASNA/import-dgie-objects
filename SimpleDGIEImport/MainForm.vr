@@ -252,8 +252,22 @@ BegClass Form1 Extends(System.Windows.Forms.Form) Access(*Public) Partial(*Yes)
             cn = *new AdgConnection( DatabaseNameStr )
             cn.Open()
 
-            // Do the restore to the target database.
-            r.Restore( cn, restoreItem )
+            /*
+               AVR 17+ needs a third arg added to the Restore method. 
+               Use this code for 17.x.
+             */
+            DclFld CancelToken Type(Nullable(*Of System.Threading.CancellationToken))  
+
+            // Do the restore to the target database - AVR 17.x and higher version.
+            r.Restore(cn, restoreItem, CancelToken)
+              
+
+             /*
+               Use this code for 15.x.
+             */
+            // Do the restore to the target database - AVR 15.x and below version.
+            // r.Restore(cn, restoreItem)
+
             ShowMessage("Import complete. See detail below", *False)
 
         Catch exc Type(System.Exception)
