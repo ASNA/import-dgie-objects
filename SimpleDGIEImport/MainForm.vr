@@ -253,17 +253,19 @@ BegClass Form1 Extends(System.Windows.Forms.Form) Access(*Public) Partial(*Yes)
             cn.Open()
 
             /*
-               AVR 17+ needs a third arg added to the Restore method. 
-               Use this code for 17.x.
+               VERSION DIFFERENCE!
+                
+               AVR 16+ needs a third arg added to the Restore method. 
+               Use this code for 16.x and higher.
              */
             DclFld CancelToken Type(Nullable(*Of System.Threading.CancellationToken))  
 
-            // Do the restore to the target database - AVR 17.x and higher version.
+            // Do the restore to the target database - AVR 16.x and higher version.
             r.Restore(cn, restoreItem, CancelToken)
               
 
              /*
-               Use this code for 15.x.
+               Use this code for 15.x and lower.
              */
             // Do the restore to the target database - AVR 15.x and below version.
             // r.Restore(cn, restoreItem)

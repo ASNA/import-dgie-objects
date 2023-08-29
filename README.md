@@ -10,6 +10,8 @@ DataGate Studio (DGS) provides database management utilities for DataGate databa
 
 DGS installs by default with ASNA Visual RPG for .NET and it is available as a stand-alone install (generally intended for server installations). DGS is intended to be a developer feature and is not intended for end-users. It would be very easy for an end-user to use DGS to do potentially damaging things to a database. This is especially true for local DG Windows-hosted databases which have very limited security.
 
+> Check the code for comments about differences needed for AVR 15.x and lower and AVR 16.x and higher.Search for "VERSION DIFFERENCE" to see the code/comments.
+
 ### Database archives
 
 DGS also includes a database archive feature. Database archives provide a way to distribute copies of databases (or parts of a database) to other developers. This feature is intended almost exclusively for Windows-hosted (server or desktop) DataGate databases (sometimes called a "local" DG database). While DGS would theoretically work with IBM&nbsp;i and SQL Server databases, using DGS with these databases is discouraged. 
